@@ -80,9 +80,9 @@ class Comments
         if(isset($config['table']))
             $this->table = $config['table'];
 
-        $this->createRules = array_merge($this->createRules, require(__DIR__ . "/../config/create_rules.php"));
-        $this->editRules = array_merge($this->editRules, require(__DIR__ . "/../config/edit_rules.php"));
-        $this->customMessages = array_merge($this->customMessages, require(__DIR__ . "/../config/custom_messages.php"));
+        $this->createRules = array_merge(require(__DIR__ . "/../config/create_rules.php"), $this->createRules);
+        $this->editRules = array_merge(require(__DIR__ . "/../config/edit_rules.php"), $this->editRules);
+        $this->customMessages = array_merge(require(__DIR__ . "/../config/custom_messages.php"), $this->customMessages);
         $this->validator = new ValidatorFactory(new SymfonyTranslator($this->lang));
         self::$_instance = $this;
         return self::$_instance;
