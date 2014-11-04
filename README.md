@@ -2,18 +2,18 @@
 
 ### Installation
 
-**Require `newway/comments` in composer.json and run `composer update`.**
+**1) Require `newway/comments` in composer.json and run `composer update`.**
 
     "require": {
         "newway/comments": "dev-master"
         ...
     }
   
-**Include "vendor/autoload.php" file to your project.**
+**2) Include "vendor/autoload.php" file to your project.**
 
     include ("../vendor/autoload.php");
   
-**Configurate database conection:**
+**3) Configurate database conection:**
 
     Newway\Comments\Init::initDatabase(array(
           'driver' => 'mysql',
@@ -26,7 +26,7 @@
           'prefix'    => '',
       ));
 
-**Сreate an instance of the class**
+**4) Сreate an instance of the class**
 
     //create instance with standart parameters
     $comments = new Newway\Comments\Comments(
@@ -92,7 +92,9 @@ You can see saving or updating results:
     
 **Using comments admin panel**
 
-To use package admin panel you must include Bootstap and jQuery libraries to your page:
+To use package admin panel you must:
+
+1) Include Bootstap and jQuery libraries to your page:
 
     //Bootstrap from Google
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
@@ -101,7 +103,7 @@ To use package admin panel you must include Bootstap and jQuery libraries to you
     //jQuery from Google
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
-And init admin panel in the right place:
+2) Init admin panel in the right place:
 
     //Generate admin HTML
     Newway\Comments\Init::initCommentsAdmin();
