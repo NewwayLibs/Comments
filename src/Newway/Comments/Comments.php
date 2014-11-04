@@ -162,10 +162,10 @@ class Comments
     }
 
     /**
-     * Add new comment
-     *
-     * @param array $input
-     * @return bool
+     * @param $content_key
+     * @param bool $perPage
+     * @param string $orderType
+     * @return CommentsModel
      */
     public function getList($content_key, $perPage = false, $orderType = 'ACS')
     {
@@ -183,6 +183,30 @@ class Comments
     }
     public function getListCount($content_key) {
         return CommentsModel::where('content_type', $content_key)->count();
+    }
+
+    /**
+     * @param $content_key
+     * @param bool $perPage
+     * @param string $orderType
+     * @return CommentsModel
+     */
+    public function getListToContent($contentKey, $contentId, $perPage = false, $orderType = 'ACS')
+    {
+        $comments = CommentsModel::where('content_id', $contentId);
+        if($perPage) {
+            $commentsPage = isset($_REQUEST['commentsPage']) ? $_REQUEST['commentsPage'] : 1;
+            $comments = CommentsModel::where('content_type', $contentKey)->offset(
+                ($commentsPage - 1) * $perPage
+            )->limit($perPage);
+        }
+        if(!empty($order))
+            $comments = $comments->order('create_at', $orderType);
+        $comments = $comments->get()->toArray();
+        return $comments;
+    }
+    public function getListToContentCount($contentKey, $contentId) {
+        return CommentsModel::where('content_type', $contentKey)->where('content_id', $contentId)->count();
     }
 
     /**
