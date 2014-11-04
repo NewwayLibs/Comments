@@ -26,10 +26,13 @@
           'prefix'    => '',
       ));
 
-**4) Сreate an instance of the class**
+**4) Run `Newway\Comments\Init::init()` once in any part of application, after `Newway\Comments\Init::initDatabase` method, to create comments table. You must run once this code, and delete it.
+Init() metod create table with `id`, `content_type`, `content_id`, `user_name`, `user_email`, `user_phone`, `user_ip`, `status`, `rating`, `created_at` and `body` fields.
+
+**5) Finaly create an instance of the class**
 
     //create instance with standart parameters
-    $comments = new Newway\Comments\Comments(
+    $comments = new Newway\Comments\Comments();
     
     //or create instance with your configuration
     $comments = new Newway\Comments\Comments(
