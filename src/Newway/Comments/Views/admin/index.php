@@ -29,7 +29,7 @@
 
 <script>
     $(document).ready(function () {
-        $('.nw_comment_delete').on('click', function () {
+        $('.nw_comment_delete').click(function () {
             var that = $(this);
             $.ajax({
                 type: "POST",
