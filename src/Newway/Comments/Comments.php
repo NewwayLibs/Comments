@@ -30,6 +30,8 @@ class Comments
      */
     private $customMessages = array();
 
+    private $customAttributes = array();
+
     /**
      * Table for comments
      *
@@ -73,8 +75,8 @@ class Comments
             $this->editRules = $config['editRules'];
         if(isset($config['customMessages']))
             $this->customMessages = $config['customMessages'];
-        if(isset($config['customMessages']))
-            $this->lang = $config['lang'];
+        if(isset($config['customMessages']['attributes']))
+            $this->customAttributes = $config['customMessages']['attributes'];
         if(isset($config['lang']))
             $this->lang = $config['lang'];
         if(isset($config['table']))
@@ -97,7 +99,7 @@ class Comments
     public function create(array $input)
     {
         $this->clearMessages();
-        $validator = $this->validator->make($input, $this->createRules, $this->customMessages);
+        $validator = $this->validator->make($input, $this->createRules, $this->customMessages, $this->customAttributes);
         if (!$validator->passes()) {
             $this->messages['validation_errors'] = $validator->errors()->toArray();
             return false;
@@ -126,7 +128,7 @@ class Comments
             $this->messages['errors'][] = $this->customMessages['comment_not_found'];
             return false;
         }
-        $validator = $this->validator->make($input, $this->editRules, $this->customMessages);
+        $validator = $this->validator->make($input, $this->editRules, $this->customMessages, $this->customAttributes);
         if (!$validator->passes()) {
             $this->messages['validation_errors'] = $validator->errors()->toArray();
             return false;
