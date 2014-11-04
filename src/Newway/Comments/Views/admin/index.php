@@ -33,7 +33,7 @@
             var that = $(this);
             $.ajax({
                 type: "POST",
-                url: $(this).data('url'),
+                url: $(this).attr('data-url'),
                 success: function () {
                     that.parents('.nw_comment_block').hide();
                 }
