@@ -13,7 +13,7 @@ class AdminController
     public function getIndex()
     {
         $header = "Все комментарии";
-        $comments = Comments::getInstance()->getListAll($this->perPage);
+        $comments = Comments::getInstance()->getListAll($this->perPage, 'DESC');
         $count = Comments::getInstance()->getListAllCount();
         $paginator = new Pagination($count, $this->perPage, $this->pageParameterName);
         ob_start();
@@ -25,7 +25,7 @@ class AdminController
     public function getGroup($group)
     {
         $header = "Комментарии группы $group";
-        $comments = Comments::getInstance()->getList($group, $this->perPage);
+        $comments = Comments::getInstance()->getList($group, $this->perPage, 'DESC');
         $count = Comments::getInstance()->getListCount($group);
         $paginator = new Pagination($count, $this->perPage, $this->pageParameterName);
         ob_start();

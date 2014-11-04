@@ -169,7 +169,7 @@ class Comments
      * @param string $orderType
      * @return CommentsModel
      */
-    public function getList($content_key, $perPage = false, $orderType = 'ACS')
+    public function getList($content_key, $perPage = false, $orderType = 'ASC')
     {
         $comments = new CommentsModel();
         if($perPage) {
@@ -178,8 +178,8 @@ class Comments
                 ($commentsPage - 1) * $perPage
             )->limit($perPage);
         }
-        if(!empty($order))
-            $comments = $comments->order('create_at', $orderType);
+        if(!empty($orderType))
+            $comments = $comments->orderBy('created_at', $orderType);
         $comments = $comments->get()->toArray();
         return $comments;
     }
@@ -193,7 +193,7 @@ class Comments
      * @param string $orderType
      * @return CommentsModel
      */
-    public function getListToContent($contentKey, $contentId, $perPage = false, $orderType = 'ACS')
+    public function getListToContent($contentKey, $contentId, $perPage = false, $orderType = 'ASC')
     {
         $comments = CommentsModel::where('content_id', $contentId);
         if($perPage) {
@@ -202,8 +202,8 @@ class Comments
                 ($commentsPage - 1) * $perPage
             )->limit($perPage);
         }
-        if(!empty($order))
-            $comments = $comments->order('create_at', $orderType);
+        if(!empty($orderType))
+            $comments = $comments->orderBy('created_at', $orderType);
         $comments = $comments->get()->toArray();
         return $comments;
     }
@@ -217,15 +217,15 @@ class Comments
      * @param array $input
      * @return bool
      */
-    public function getListAll($perPage = false, $orderType = 'ACS')
+    public function getListAll($perPage = false, $orderType = 'ASC')
     {
         $comments = new CommentsModel();
         if($perPage) {
             $commentsPage = isset($_REQUEST['commentsPage']) ? $_REQUEST['commentsPage'] : 1;
             $comments = CommentsModel::offset(($commentsPage - 1) * $perPage)->limit($perPage);
         }
-        if(!empty($order))
-            $comments = $comments->order('create_at', $orderType);
+        if(!empty($orderType))
+            $comments = $comments->orderBy('created_at', $orderType);
         $comments = $comments->get()->toArray();
         return $comments;
     }
