@@ -2,19 +2,19 @@
 
 ### Installation
 
-**Require `daegon/comments` in composer.json and run `composer update`.**
+**Require `newway/comments` in composer.json and run `composer update`.**
 
     "repositories": [
         {
             "type": "git",
-            "url" : "https://github.com/Daegon/comments.git",
+            "url" : "https://github.com/newway/comments.git",
             "reference": "master"
         }
         ...
     ],
     "require": {
         "php": ">=5.3.0",
-        "daegon/comments": "dev-master"
+        "newway/comments": "dev-master"
         ...
     },
   ...
@@ -46,8 +46,8 @@ Use `Newway\Comments\Comments` class to CRUD operations.
 
     $comments = new Newway\Comments\Comments();
     $comments->create($id, [
-        'name' => 'daegon',
-        'email' => 'daegon@daegon.com',
+        'name' => 'newway',
+        'email' => 'newway@newway.com',
         'body' => 'My text'
       ]);
     ...
