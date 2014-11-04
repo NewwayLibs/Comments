@@ -63,8 +63,7 @@ class Comments
     protected static $_instance;
 
     /**
-     * @param array $rules
-     * @param array $customMessages
+     * @param array $config
      */
     public function __construct(array $config = array())
     {
