@@ -1,11 +1,11 @@
 {
-    "name": "daegon/comments",
+    "name": "newway/comments",
     "description": "",
     "license": "MIT",
     "authors": [
         {
-            "name": "Biluk Andrey",
-            "email": "biluk.a@newway.com.ua"
+            "name": "Zimm",
+            "email": "slobodzian.r@newway.com.ua"
         }
     ],
     "require": {
