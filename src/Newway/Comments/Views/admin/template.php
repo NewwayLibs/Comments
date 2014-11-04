@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid newway-comments">
     <div class="row-fluid">
         <div class="col-md-3">
             <div class="well sidebar-nav">
