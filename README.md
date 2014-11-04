@@ -56,7 +56,7 @@
 
 **Operations with comments**
 
-Using `Newway\Comments\Comments` class for CRUD operations.
+Use `Newway\Comments\Comments` class for CRUD operations.
     
     $comments = Comments::getInstance();
     
@@ -80,7 +80,8 @@ Using `Newway\Comments\Comments` class for CRUD operations.
 You can see saving or updating results: 
 
     if ($comments->edit($id, $_POST)) {
-        //if TRUE - updating without errors    
+        $successMessage = $comments->getSuccessMessage();
+        //if TRUE - updating without errors 
     } else {
         if ($errors = $comments->getValidationErrors()) {
             //validation errors
