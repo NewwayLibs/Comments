@@ -169,22 +169,27 @@ class Comments
      * @param string $orderType
      * @return CommentsModel
      */
-    public function getList($content_key, $perPage = false, $orderType = 'ASC')
+    public function getList(array $params = array(), $perPage = false, $orderType = 'ASC')
     {
         $comments = new CommentsModel();
+        foreach($params as $name => $value) {
+            $comments = $comments->where($name, $value);
+        }
         if($perPage) {
             $commentsPage = isset($_REQUEST['commentsPage']) ? $_REQUEST['commentsPage'] : 1;
-            $comments = CommentsModel::where('content_type', $content_key)->offset(
-                ($commentsPage - 1) * $perPage
-            )->limit($perPage);
+            $comments = $comments->offset(($commentsPage - 1) * $perPage)->limit($perPage);
         }
         if(!empty($orderType))
             $comments = $comments->orderBy('created_at', $orderType);
         $comments = $comments->get()->toArray();
         return $comments;
     }
-    public function getListCount($content_key) {
-        return CommentsModel::where('content_type', $content_key)->count();
+    public function getListCount(array $params = array()) {
+        $comments = new CommentsModel();
+        foreach($params as $name => $value) {
+            $comments = $comments->where($name, $value);
+        }
+        return $comments->count();
     }
 
     /**
@@ -193,12 +198,15 @@ class Comments
      * @param string $orderType
      * @return CommentsModel
      */
-    public function getListToContent($contentKey, $contentId, $perPage = false, $orderType = 'ASC')
+    public function getListToContent(array $params = array(), $perPage = false, $orderType = 'ASC')
     {
-        $comments = CommentsModel::where('content_id', $contentId);
+        $comments = new CommentsModel();
+        foreach($params as $name => $value) {
+            $comments = $comments->where($name, $value);
+        }
         if($perPage) {
             $commentsPage = isset($_REQUEST['commentsPage']) ? $_REQUEST['commentsPage'] : 1;
-            $comments = CommentsModel::where('content_type', $contentKey)->offset(
+            $comments = $comments->offset(
                 ($commentsPage - 1) * $perPage
             )->limit($perPage);
         }
@@ -207,8 +215,12 @@ class Comments
         $comments = $comments->get()->toArray();
         return $comments;
     }
-    public function getListToContentCount($contentKey, $contentId) {
-        return CommentsModel::where('content_type', $contentKey)->where('content_id', $contentId)->count();
+    public function getListToContentCount(array $params = array()) {
+        $comments = new CommentsModel();
+        foreach($params as $name => $value) {
+            $comments = $comments->where($name, $value);
+        }
+        return $comments->count();
     }
 
     /**
@@ -217,20 +229,27 @@ class Comments
      * @param array $input
      * @return bool
      */
-    public function getListAll($perPage = false, $orderType = 'ASC')
+    public function getListAll(array $params = array(), $perPage = false, $orderType = 'ASC')
     {
         $comments = new CommentsModel();
+        foreach($params as $name => $value) {
+            $comments = $comments->where($name, $value);
+        }
         if($perPage) {
             $commentsPage = isset($_REQUEST['commentsPage']) ? $_REQUEST['commentsPage'] : 1;
-            $comments = CommentsModel::offset(($commentsPage - 1) * $perPage)->limit($perPage);
+            $comments = $comments->offset(($commentsPage - 1) * $perPage)->limit($perPage);
         }
         if(!empty($orderType))
             $comments = $comments->orderBy('created_at', $orderType);
         $comments = $comments->get()->toArray();
         return $comments;
     }
-    public function getListAllCount() {
-        return CommentsModel::count();
+    public function getListAllCount(array $params = array()) {
+        $comments = new CommentsModel();
+        foreach($params as $name => $value) {
+            $comments = $comments->where($name, $value);
+        }
+        return $comments->count();
     }
 
     /**

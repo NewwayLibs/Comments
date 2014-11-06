@@ -5,7 +5,7 @@
 **1) Require `newway/comments` in composer.json and run `composer update`.**
 
     "require": {
-        "newway/comments": "dev-master"
+        "newway/comments": "0.1"
         ...
     }
   
