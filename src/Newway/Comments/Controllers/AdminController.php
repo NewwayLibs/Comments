@@ -3,6 +3,9 @@
 use Newway\Comments\Comments;
 use Newway\Comments\Route;
 use Newway\Comments\Pagination;
+use Newway\Comments\Exceptions\ValidationFailException;
+use Newway\Comments\Exceptions\CreateCommentException;
+use Newway\Comments\Exceptions\UpdateCommentException;
 
 class AdminController
 {
@@ -13,12 +16,12 @@ class AdminController
     public function getIndex()
     {
         $header = "Все комментарии";
-        $comments = Comments::getInstance()->getListAll(
+        $comments = Comments::getInstance()->getList(
             array(),
             $this->perPage,
             'DESC'
         );
-        $count = Comments::getInstance()->getListAllCount();
+        $count = Comments::getInstance()->getListCount();
         $paginator = new Pagination($count, $this->perPage, $this->pageParameterName);
         ob_start();
         require(__DIR__ . '/../Views/admin/index.php');
@@ -82,51 +85,54 @@ class AdminController
     public function editComment($id)
     {
         $comments = Comments::getInstance();
+        $_SESSION['comments_add_form'] = $_POST;
 
-        if ($comments->edit($id, $_POST)) {
-            $_SESSION['comments_messages'][] = $comments->getSuccess();
+        try {
+            $comments->edit($id, $_POST);
+        } catch(ValidationFailException $e) {
+            $errors = $comments->getValidationErrors();
+            ob_start();
+            require(__DIR__ . '/../Views/admin/partials/validation_errors.php');
+            $_SESSION['comments_messages'][] = ob_get_clean();
+            header(
+                "Location: " . Route::replaceParameters(
+                    Route::addParam($_GET, array('c_task' => 'edit', 'c_id' => $id))
+                )
+            );
+            exit;
+        } catch(UpdateCommentException $e) {
+            $_SESSION['comments_messages'][] = $comments->getError();
             header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
-        } else {
-            $_SESSION['comments_add_form'] = $_POST;
-            if ($errors = $comments->getValidationErrors()) {
-                ob_start();
-                require(__DIR__ . '/../Views/admin/partials/validation_errors.php');
-                $_SESSION['comments_messages'][] = ob_get_clean();
-                header(
-                    "Location: " . Route::replaceParameters(
-                        Route::addParam($_GET, array('c_task' => 'edit', 'c_id' => $id))
-                    )
-                );
-                exit;
-            } else {
-                $_SESSION['comments_messages'][] = implode('<br>', $comments->getErrors());
-                header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
-                exit;
-            }
+            exit;
         }
+
+        $_SESSION['comments_messages'][] = $comments->getSuccess();
+        header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
+        exit;
     }
 
     public function addComment()
     {
         $comments = Comments::getInstance();
 
-        if ($comments->create($_POST)) {
-            $_SESSION['comments_messages'][] = $comments->getSuccess();
-            header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
-        } else {
-            $_SESSION['comments_add_form'] = $_POST;
-            if ($errors = $comments->getValidationErrors()) {
-                ob_start();
-                require(__DIR__ . '/../Views/admin/partials/validation_errors.php');
-                $_SESSION['comments_messages'][] = ob_get_clean();
-                header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'add'))));
-                exit;
-            } else {
-                $_SESSION['comments_messages'][] = implode('<br>', $comments->getErrors());
-                header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'add'))));
-                exit;
-            }
+        $_SESSION['comments_add_form'] = $_POST;
+        try{
+            $comments->create($_POST);
+        } catch(ValidationFailException $e) {
+            $errors = $comments->getValidationErrors();
+            ob_start();
+            require(__DIR__ . '/../Views/admin/partials/validation_errors.php');
+            $_SESSION['comments_messages'][] = ob_get_clean();
+            header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'add'))));
+            exit;
+        } catch(UpdateCommentException $e) {
+            $_SESSION['comments_messages'][] = implode('<br>', $comments->getError());
+            header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'add'))));
+            exit;
         }
+        $_SESSION['comments_messages'][] = $comments->getSuccess();
+        header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
+        exit;
     }
 
     public function deleteComment($id)

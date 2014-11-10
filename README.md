@@ -5,7 +5,7 @@
 **1) Require `newway/comments` in composer.json and run `composer update`.**
 
     "require": {
-        "newway/comments": "0.1"
+        "newway/comments": "dev-master"
         ...
     }
   
@@ -84,18 +84,14 @@ Use `Newway\Comments\Comments` class for CRUD operations.
 
 You can see saving or updating results: 
 
-    if ($comments->edit($id, $_POST)) {
-        $successMessage = $comments->getSuccessMessage();
-        //if TRUE - updating without errors 
-    } else {
-        if ($errors = $comments->getValidationErrors()) {
-            //validation errors
-        } else {
-            $errors = $comments->getErrors()
-            //some other errors    
-        }
+    try{
+        $comments->edit($id, $_POST))
+    } catch (Newway\Comments\Exceptions\ValidationFailException $e) {
+        $errors = $comments->getValidationErrors();
+    } catch (Newway\Comments\Exceptions\UpdateCommentException $e) {
+        $error = $comments->getError();
     }
-    
+
 **Using comments admin panel**
 
 To use package admin panel you must:
@@ -113,3 +109,21 @@ To use package admin panel you must:
 
     //Generate admin HTML
     Newway\Comments\Init::initCommentsAdmin();
+
+**Using standard comments template**
+
+    //Create objects
+    $c = new Newway\Comments\Comments();
+    $cTemplate = new Newway\Comments\CommentsTemplate();
+
+    //Render styles and HTML
+    $cTemplate->displayCss();
+    $cTemplate->display(
+        $c->getList(
+            array(
+                'content_type' => 'page',
+                'content_id' => 1,
+                'status' => 1,
+            )
+        )
+    );

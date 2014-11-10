@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
-use Newway\Comments\Exceptions\NewwayCommentsExceptions;
+use Newway\Comments\Exceptions\NewwayCommentsException;
 use Newway\Comments\Controllers\AdminController;
 
 /**
@@ -15,12 +15,12 @@ class Init
     /**
      * Create comment table
      *
-     * @throws NewwayCommentsExceptions
+     * @throws NewwayCommentsException
      */
     public static function init()
     {
         if (Capsule::schema()->hasTable('comments')) {
-            throw new NewwayCommentsExceptions('Table comments already exist, drop table and try again');
+            throw new NewwayCommentsException('Table comments already exist, drop table and try again');
         }
 //        Capsule::schema()->drop('comments');
         Capsule::schema()->create('comments', function (Blueprint $table) {

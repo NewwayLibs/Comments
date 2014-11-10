@@ -1,9 +1,14 @@
 <?php namespace Newway\Comments;
 
-use Newway\Comments\Exceptions\NewwayCommentsExceptions;
+use Newway\Comments\Exceptions\NewwayCommentsException;
+use Newway\Comments\Exceptions\ValidationFailException;
+use Newway\Comments\Exceptions\CreateCommentException;
+use Newway\Comments\Exceptions\UpdateCommentException;
+use Newway\Comments\Exceptions\CommentNotFoundException;
 use Newway\Comments\Models\Comments as CommentsModel;
 use Illuminate\Validation\Factory as ValidatorFactory;
 use Symfony\Component\Translation\Translator as SymfonyTranslator;
+use Newway\Comments\Interfaces\CommentsTemplateInterface;
 
 class Comments
 {
@@ -55,16 +60,11 @@ class Comments
     protected $validator;
 
     /**
-     * @var int
-     */
-    protected $perPage = 10;
-
-    /**
      * @var
      */
     protected static $_instance;
 
-    /**
+        /**
      * @param array $config
      */
     public function __construct(array $config = array())
@@ -94,6 +94,7 @@ class Comments
      * Add new comment
      *
      * @param array $input
+     * @throws \Exception
      * @return bool
      */
     public function create(array $input)
@@ -102,16 +103,15 @@ class Comments
         $validator = $this->validator->make($input, $this->createRules, $this->customMessages, $this->customAttributes);
         if (!$validator->passes()) {
             $this->messages['validation_errors'] = $validator->errors()->toArray();
-            return false;
+            throw new ValidationFailException;
         }
         $comment = new CommentsModel($input);
         $comment->setCreatedAt($comment->freshTimestamp());
         if($comment->save()){
             $this->messages['success'] = $this->customMessages['successfully_added'];
-            return true;
         } else {
-            $this->messages['errors'][] = $this->customMessages['add_error'];
-            return false;
+            $this->messages['error'] = $this->customMessages['add_error'];
+            throw new CreateCommentException;
         }
     }
 
@@ -125,28 +125,27 @@ class Comments
     {
         $this->clearMessages();
         if(!$comment = CommentsModel::find($id)) {
-            $this->messages['errors'][] = $this->customMessages['comment_not_found'];
-            return false;
+            $this->messages['error'] = $this->customMessages['comment_not_found'];
+            throw new CommentNotFoundException;
         }
         $validator = $this->validator->make($input, $this->editRules, $this->customMessages, $this->customAttributes);
         if (!$validator->passes()) {
             $this->messages['validation_errors'] = $validator->errors()->toArray();
-            return false;
+            throw new ValidationFailException;
         }
         $comment->setCreatedAt($comment->freshTimestamp());
         if($comment->update($input)){
             $this->messages['success'] = $this->customMessages['successfully_edit'];
-            return true;
         } else {
-            $this->messages['errors'][] = $this->customMessages['edit_error'];
-            return false;
+            $this->messages['error'] = $this->customMessages['edit_error'];
+            throw new UpdateCommentException;
         }
     }
 
     public function getComment($id) {
         $this->clearMessages();
         if(!$comment = CommentsModel::find($id)) {
-            $this->messages['errors'][] = $this->customMessages['comment_not_found'];
+            $this->messages['error'] = $this->customMessages['comment_not_found'];
             return array();
         }
         return $comment->toArray();
@@ -158,7 +157,7 @@ class Comments
             $this->messages['success'] = $this->customMessages['successfully_delete'];
             return true;
         } else {
-            $this->messages['errors'][] = $this->customMessages['comment_not_found'];
+            $this->messages['error'] = $this->customMessages['comment_not_found'];
             return false;
         }
     }
@@ -193,66 +192,6 @@ class Comments
     }
 
     /**
-     * @param $content_key
-     * @param bool $perPage
-     * @param string $orderType
-     * @return CommentsModel
-     */
-    public function getListToContent(array $params = array(), $perPage = false, $orderType = 'ASC')
-    {
-        $comments = new CommentsModel();
-        foreach($params as $name => $value) {
-            $comments = $comments->where($name, $value);
-        }
-        if($perPage) {
-            $commentsPage = isset($_REQUEST['commentsPage']) ? $_REQUEST['commentsPage'] : 1;
-            $comments = $comments->offset(
-                ($commentsPage - 1) * $perPage
-            )->limit($perPage);
-        }
-        if(!empty($orderType))
-            $comments = $comments->orderBy('created_at', $orderType);
-        $comments = $comments->get()->toArray();
-        return $comments;
-    }
-    public function getListToContentCount(array $params = array()) {
-        $comments = new CommentsModel();
-        foreach($params as $name => $value) {
-            $comments = $comments->where($name, $value);
-        }
-        return $comments->count();
-    }
-
-    /**
-     * Add new comment
-     *
-     * @param array $input
-     * @return bool
-     */
-    public function getListAll(array $params = array(), $perPage = false, $orderType = 'ASC')
-    {
-        $comments = new CommentsModel();
-        foreach($params as $name => $value) {
-            $comments = $comments->where($name, $value);
-        }
-        if($perPage) {
-            $commentsPage = isset($_REQUEST['commentsPage']) ? $_REQUEST['commentsPage'] : 1;
-            $comments = $comments->offset(($commentsPage - 1) * $perPage)->limit($perPage);
-        }
-        if(!empty($orderType))
-            $comments = $comments->orderBy('created_at', $orderType);
-        $comments = $comments->get()->toArray();
-        return $comments;
-    }
-    public function getListAllCount(array $params = array()) {
-        $comments = new CommentsModel();
-        foreach($params as $name => $value) {
-            $comments = $comments->where($name, $value);
-        }
-        return $comments->count();
-    }
-
-    /**
      * Add new comment
      *
      * @param array $input
@@ -268,11 +207,11 @@ class Comments
      * Get instance of Comments
      *
      * @return Comments
-     * @throws NewwayCommentsExceptions
+     * @throws NewwayCommentsException
      */
     public static function getInstance() {
         if (null === self::$_instance) {
-            throw new NewwayCommentsExceptions('Class Comments not created, create class first');
+            throw new NewwayCommentsException('Class Comments not created, create class first');
         }
         return self::$_instance;
     }
@@ -298,8 +237,8 @@ class Comments
      *
      * @return array
      */
-    public function getErrors() {
-        return $this->messages['errors'];
+    public function getError() {
+        return $this->messages['error'];
     }
 
     /**
@@ -327,9 +266,5 @@ class Comments
      */
     public function getTable() {
         return $this->table;
-    }
-
-    public function setPerpage($perPage) {
-        $this->perPage = $perPage;
     }
 }
