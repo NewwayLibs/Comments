@@ -14,8 +14,8 @@ class CommentsTemplate implements CommentsTemplateInterface
      */
     public function __construct($params = array())
     {
-        $this->cssPath = $params['css_path'] ? $params['css_path'] : __DIR__ . '/Views/comments/assets/css/style.css';
-        $this->viewPath = $params['view_path'] ? $params['view_path'] : __DIR__ . '/Views/comments/views/index.php';
+        $this->cssPath = !empty($params['css_path']) ? $params['css_path'] : __DIR__ . '/Views/comments/assets/css/style.css';
+        $this->viewPath = !empty($params['view_path']) ? $params['view_path'] : __DIR__ . '/Views/comments/views/index.php';
     }
 
     public function displayCss($print = true) {
