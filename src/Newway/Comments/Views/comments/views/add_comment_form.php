@@ -19,13 +19,13 @@
     <form method="post">
         <div class="row">
             <label for="user_name">Имя:</label>
-            <input type="text" id="user_name" name="user_name" value="<?=$_POST['user_name']?>" />
+            <input type="text" id="user_name" name="user_name" value="<?= (isset($_POST['user_name']) ? htmlspecialchars($_POST['user_name']) : null) ?>" />
             <div class="clr"></div>
         </div>
 
         <div class="row">
             <label for="user_email">Email:</label>
-            <input type="text" name="user_email" id="user_email" value="<?=$_POST['user_email']?>" />
+            <input type="text" name="user_email" id="user_email" value="<?= (isset($_POST['user_email']) ? htmlspecialchars($_POST['user_email']) : null) ?>" />
             <div class="clr"></div>
         </div>
 
@@ -56,7 +56,7 @@
 
         <div class="row">
             <label for="body">Текст:</label>
-            <textarea id="body" name="body"><?=$_POST['body']?></textarea>
+            <textarea id="body" name="body"><?= (isset($_POST['body']) ? htmlspecialchars($_POST['body']) : null) ?></textarea>
             <div class="clr"></div>
         </div>
 
