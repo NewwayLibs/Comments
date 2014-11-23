@@ -1,6 +1,6 @@
 <?php use Newway\Comments\Comments; ?>
 <div class="comment-form" id="comment_form" >
-    <h2>Додати коментар:</h2>
+    <h2>Добавить комментарий:</h2>
     <?if($errors = Comments::getInstance()->getValidationErrors()):?>
         <div class="comments-messages errors">
             <? include('partials/validation_errors.php') ;?>
