@@ -1,11 +1,11 @@
 <?php namespace Newway\Comments\Controllers;
 
 use Newway\Comments\Comments;
+use Newway\Comments\Exceptions\CommentNotFoundException;
 use Newway\Comments\Route;
 use Newway\Comments\Pagination;
 use Newway\Comments\Exceptions\ValidationFailException;
-use Newway\Comments\Exceptions\CreateCommentException;
-use Newway\Comments\Exceptions\UpdateCommentException;
+use Newway\Comments\Exceptions\NewwayCommentsException;
 
 class AdminController
 {
@@ -70,15 +70,16 @@ class AdminController
     {
         $header = "Редактирование комментария";
         $comments = Comments::getInstance();
-        $comment = $comments->getComment($id);
-        ob_start();
-        require(__DIR__ . '/../Views/admin/edit.php');
-        $content = ob_get_clean();
-        if (empty($comment)) {
-            $_SESSION['comments_messages'][] = implode('<br>', $comments->getErrors());
+        try {
+          $comment = $comments->getComment($id);
+        } catch (CommentNotFoundException $e) {
+            $_SESSION['comments_messages'][] = implode('<br>', $e->getErrors());
             header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
             exit;
         }
+        ob_start();
+        require(__DIR__ . '/../Views/admin/edit.php');
+        $content = ob_get_clean();
         include(__DIR__ . '/../Views/admin/template.php');
     }
 
@@ -90,7 +91,7 @@ class AdminController
         try {
             $comments->edit($id, $_POST);
         } catch(ValidationFailException $e) {
-            $errors = $comments->getValidationErrors();
+            $errors = $e->getErrors();
             ob_start();
             require(__DIR__ . '/../Views/admin/partials/validation_errors.php');
             $_SESSION['comments_messages'][] = ob_get_clean();
@@ -100,8 +101,8 @@ class AdminController
                 )
             );
             exit;
-        } catch(UpdateCommentException $e) {
-            $_SESSION['comments_messages'][] = $comments->getError();
+        } catch(NewwayCommentsException $e) {
+            $_SESSION['comments_messages'][] = $e->getMessage();
             header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
             exit;
         }
@@ -119,14 +120,14 @@ class AdminController
         try{
             $comments->create($_POST);
         } catch(ValidationFailException $e) {
-            $errors = $comments->getValidationErrors();
+            $errors = $e->getErrors();
             ob_start();
             require(__DIR__ . '/../Views/admin/partials/validation_errors.php');
             $_SESSION['comments_messages'][] = ob_get_clean();
             header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'add'))));
             exit;
-        } catch(UpdateCommentException $e) {
-            $_SESSION['comments_messages'][] = implode('<br>', $comments->getError());
+        } catch(NewwayCommentsException $e) {
+            $_SESSION['comments_messages'][] = $e->getMessage();
             header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'add'))));
             exit;
         }

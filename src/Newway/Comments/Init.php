@@ -14,19 +14,23 @@ class Init
 
     /**
      * Create comment table
-     *
+     * @param bool $hardInit
      * @throws NewwayCommentsException
      */
-    public static function init()
+    public static function init($hardInit = false)
     {
-        if (Capsule::schema()->hasTable('comments')) {
-            throw new NewwayCommentsException('Table comments already exist, drop table and try again');
+        if($hardInit) {
+          Capsule::schema()->drop('comments');
         }
-//        Capsule::schema()->drop('comments');
+        if (Capsule::schema()->hasTable('comments')) {
+            throw new NewwayCommentsException('Table comments already exist, drop table and try again or use hardInit');
+        }
         Capsule::schema()->create('comments', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('content_type', 32)->index();
                 $table->integer('content_id')->unsigned()->index();
+                $table->string('content_url');
+                $table->string('content_url_title')->nullable();
                 $table->string('user_name')->nullable();
                 $table->string('user_email')->nullable();
                 $table->string('user_phone')->nullable();

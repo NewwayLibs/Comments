@@ -1,20 +1,21 @@
 <?php use Newway\Comments\Comments; ?>
 <div class="comment-form" id="comment_form" >
     <h2>Добавить комментарий:</h2>
-    <?if($errors = Comments::getInstance()->getValidationErrors()):?>
-        <div class="comments-messages errors">
-            <? include('partials/validation_errors.php') ;?>
-        </div>
+    <?if(!empty($messages)):?>
+      <?foreach($messages as $type => $message):?>
+          <div class="comments-messages <?=is_string($type) ? $type : 'error'?>">
+            <?=$message?>
+          </div>
+      <?endforeach;?>
     <?endif;?>
-    <?if($msg = Comments::getInstance()->getError()):?>
-        <div class="comments-messages errors">
-            <?=$msg?>
-        </div>
-    <?endif;?>
-    <?if($msg = Comments::getInstance()->getSuccess()):?>
-        <div class="comments-messages errors">
-            <?=$msg?>
-        </div>
+    <?if(!empty($validationResult)):?>
+      <?foreach($validationResult as $field => $messagesOfField):?>
+        <?foreach($messagesOfField as $key => $message):?>
+            <div class="comments-messages error">
+              <?=$message?>
+            </div>
+        <?endforeach;?>
+      <?endforeach;?>
     <?endif;?>
     <form method="post">
         <div class="row">

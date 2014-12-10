@@ -31,6 +31,10 @@
             <input type="text" class="form-control" id="InputDate1" placeholder="Введите дату" name="created_at" value="<?=isset($oldForm['created_at']) ? $oldForm['created_at'] : ''?>">
         </div>
         <div class="form-group">
+          <label for="inputContentUrl">Url комментируемой страницы</label>
+          <input type="text" class="form-control" id="inputContentUrl" placeholder="Введите url комментируемой страницы" name="content_url" value="<?=isset($oldForm['created_at']) ? $oldForm['created_at'] : ''?>">
+        </div>
+        <div class="form-group">
             <label for="InputStatus1">Статус</label>
             <select class="form-control" name="status">
                 <option value="0">Выключен</option>

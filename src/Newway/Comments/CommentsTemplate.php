@@ -30,7 +30,7 @@ class CommentsTemplate implements CommentsTemplateInterface
         throw new TemplateFilesException("File $this->cssPath not found!");
     }
 
-    public function display($list, $print = true) {
+    public function display($list, array $messages = array(), array $validationResult = array(), $print = true) {
         if (!is_file($this->viewPath))
             throw new TemplateFilesException("File $this->viewPath not found!");
         ob_start();

@@ -5,17 +5,23 @@
     <div class="nw_comment_block col-md-12">
         <hr/>
         <div class="col-md-6">
-            <b>Тип контента:</b><?=$comment['content_type']?><br/>
-            <b>Контент ID:</b><?=$comment['content_id']?><br/>
-            <b>Дата добавления:</b><?=$comment['created_at']?><br/>
+            <b>Тип контента:</b> <?=$comment['content_type']?><br/>
+            <b>Контент ID:</b> <?=$comment['content_id']?><br/>
+            <b>Дата добавления:</b> <?=$comment['created_at']?><br/>
             <b>Статус:</b> <?=($comment['status']) ? "Включен" : "Выключен" ?><br/>
             <b>Рейтинг:</b> <?=$comment['rating']?><br/>
         </div>
         <div class="col-md-6">
-            <b>Имя пользователя:</b><?=$comment['user_name']?><br/>
-            <b>Емейл:</b><?=$comment['user_email']?><br/>
-            <b>Телефон:</b><?=$comment['user_phone']?><br/>
-            <b>IP:</b><?=$comment['user_ip']?><br/>
+            <b>Имя пользователя:</b> <?=$comment['user_name']?><br/>
+            <b>Емейл:</b> <?=$comment['user_email']?><br/>
+            <b>Телефон:</b> <?=$comment['user_phone']?><br/>
+            <b>IP:</b> <?=$comment['user_ip']?><br/>
+            <b>Ссылка:</b>
+              <? if($comment['content_url_title']): ?>
+                <a href="<?=$comment['content_url']?>"><?= $comment['content_url_title'] ?></a><br/>
+              <? else: ?>
+                <a href="<?=$comment['content_url']?>"><?= $comment['content_url'] ?></a><br/>
+              <? endif; ?>
         </div>
         <div class="col-md-12"><?=$comment['body']?></div>
         <div class="col-md-12 text-right">

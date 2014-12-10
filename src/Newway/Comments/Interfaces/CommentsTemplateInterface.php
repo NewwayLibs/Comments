@@ -2,6 +2,6 @@
 
 interface CommentsTemplateInterface {
 
-    public function display($list, $print);
+    public function display($list);
 
 }

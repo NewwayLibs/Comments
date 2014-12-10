@@ -8,5 +8,6 @@ return array(
     'edit_error' => 'Edit error',
     'successfully_delete' => 'Successfully delete',
     'comment_not_found' => 'Comment not found',
-    'date' => 'Неверный формат даты (дд.мм.гггг чч:мм)',
+    'date' => 'Wrong data format (dd.mm.yyyy hh:mm)',
+    'ip' => 'Wrong ip',
 );

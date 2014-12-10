@@ -46,9 +46,7 @@ class Comments
 
     /**
      * List of messages. Array contains validation_errors, success message, safe errors.
-     * 'validation_errors' => [ 'field name' => [ 0 => 'first error' ... ] ... ]
      * 'success' => 'one success message'
-     * 'errors' => [ 0 => 'first error' ... ]
      *
      * @var array
      */
@@ -67,16 +65,14 @@ class Comments
         /**
      * @param array $config
      */
-    public function __construct(array $config = array())
+    private function __construct(array $config = array())
     {
         if(isset($config['createRules']))
-            $this->createRules = $config['createRules'];
+            $this->setCreateRules($config['createRules']);
         if(isset($config['editRules']))
-            $this->editRules = $config['editRules'];
+            $this->setEditRules($config['editRules']);
         if(isset($config['customMessages']))
-            $this->customMessages = $config['customMessages'];
-        if(isset($config['customMessages']['attributes']))
-            $this->customAttributes = $config['customMessages']['attributes'];
+            $this->setCustomMessages($config['customMessages']);
         if(isset($config['lang']))
             $this->lang = $config['lang'];
         if(isset($config['table']))
@@ -86,8 +82,6 @@ class Comments
         $this->editRules = array_merge(require(__DIR__ . "/../config/edit_rules.php"), $this->editRules);
         $this->customMessages = array_merge(require(__DIR__ . "/../config/custom_messages.php"), $this->customMessages);
         $this->validator = new ValidatorFactory(new SymfonyTranslator($this->lang));
-        self::$_instance = $this;
-        return self::$_instance;
     }
 
     /**
@@ -102,16 +96,19 @@ class Comments
         $this->clearMessages();
         $validator = $this->validator->make($input, $this->createRules, $this->customMessages, $this->customAttributes);
         if (!$validator->passes()) {
-            $this->messages['validation_errors'] = $validator->errors()->toArray();
-            throw new ValidationFailException;
+            throw new ValidationFailException($this->customMessages['validation_fail'], $validator->errors()->toArray());
         }
+
         $comment = new CommentsModel($input);
         $comment->setCreatedAt($comment->freshTimestamp());
         if($comment->save()){
+            if(!$comment->content_url) {
+              $comment->content_url = "{$_SERVER['HTTP_REFERER']}#comment_{$comment->id}";
+              $comment->save();
+            }
             $this->messages['success'] = $this->customMessages['successfully_added'];
         } else {
-            $this->messages['error'] = $this->customMessages['add_error'];
-            throw new CreateCommentException;
+            throw new CreateCommentException($this->customMessages['add_error']);
         }
     }
 
@@ -125,28 +122,24 @@ class Comments
     {
         $this->clearMessages();
         if(!$comment = CommentsModel::find($id)) {
-            $this->messages['error'] = $this->customMessages['comment_not_found'];
-            throw new CommentNotFoundException;
+            throw new CommentNotFoundException($this->customMessages['comment_not_found']);
         }
         $validator = $this->validator->make($input, $this->editRules, $this->customMessages, $this->customAttributes);
         if (!$validator->passes()) {
-            $this->messages['validation_errors'] = $validator->errors()->toArray();
-            throw new ValidationFailException;
+          throw new ValidationFailException("Validation fail", $validator->errors()->toArray());
         }
         $comment->setCreatedAt($comment->freshTimestamp());
         if($comment->update($input)){
             $this->messages['success'] = $this->customMessages['successfully_edit'];
         } else {
-            $this->messages['error'] = $this->customMessages['edit_error'];
-            throw new UpdateCommentException;
+            throw new UpdateCommentException($this->customMessages['edit_error']);
         }
     }
 
     public function getComment($id) {
         $this->clearMessages();
         if(!$comment = CommentsModel::find($id)) {
-            $this->messages['error'] = $this->customMessages['comment_not_found'];
-            return array();
+            throw new CommentNotFoundException($this->customMessages['comment_not_found']);
         }
         return $comment->toArray();
     }
@@ -157,8 +150,7 @@ class Comments
             $this->messages['success'] = $this->customMessages['successfully_delete'];
             return true;
         } else {
-            $this->messages['error'] = $this->customMessages['comment_not_found'];
-            return false;
+          throw new CommentNotFoundException($this->customMessages['comment_not_found']);
         }
     }
 
@@ -192,10 +184,7 @@ class Comments
     }
 
     /**
-     * Add new comment
-     *
-     * @param array $input
-     * @return array
+     * @return mixed
      */
     public function getContentKeysList()
     {
@@ -207,20 +196,17 @@ class Comments
      * Get instance of Comments
      *
      * @return Comments
-     * @throws NewwayCommentsException
      */
-    public static function getInstance() {
-        if (null === self::$_instance) {
-            throw new NewwayCommentsException('Class Comments not created, create class first');
-        }
-        return self::$_instance;
+    public static function getInstance(array $config = array()) {
+      if (null === self::$_instance) {
+        self::$_instance = new self($config);
+      }
+      return self::$_instance;
     }
 
     public function clearMessages() {
         $this->messages = array(
-            'validation_errors' => array(),
             'success' => null,
-            'errors' => array()
         );
     }
     /**
@@ -231,25 +217,6 @@ class Comments
     public function getMessages() {
         return $this->messages;
     }
-
-    /**
-     * Get errors array
-     *
-     * @return array
-     */
-    public function getError() {
-        return $this->messages['error'];
-    }
-
-    /**
-     * Get errors array
-     *
-     * @return array
-     */
-    public function getValidationErrors() {
-        return $this->messages['validation_errors'];
-    }
-
     /**
      * Get success message
      *
@@ -266,5 +233,16 @@ class Comments
      */
     public function getTable() {
         return $this->table;
+    }
+    private function setCreateRules(array $createRules){
+      $this->createRules = $createRules;
+    }
+    private function setEditRules(array $editRules){
+      $this->editRules = $editRules;
+    }
+    private function setCustomMessages(array $customMessages){
+      $this->customMessages = $customMessages;
+      if(isset($customMessages['attributes']))
+        $this->customAttributes = $customMessages['attributes'];
     }
 }
