@@ -10,4 +10,5 @@ return array(
     'comment_not_found' => 'Comment not found',
     'date' => 'Wrong data format (dd.mm.yyyy hh:mm)',
     'ip' => 'Wrong ip',
+    'invalid_captcha' => 'Invalid captcha',
 );

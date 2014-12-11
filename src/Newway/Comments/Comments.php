@@ -1,6 +1,6 @@
 <?php namespace Newway\Comments;
 
-use Newway\Comments\Exceptions\NewwayCommentsException;
+use Newway\Comments\Exceptions\CaptchaException;
 use Newway\Comments\Exceptions\ValidationFailException;
 use Newway\Comments\Exceptions\CreateCommentException;
 use Newway\Comments\Exceptions\UpdateCommentException;
@@ -45,6 +45,13 @@ class Comments
     private $table = 'comments';
 
     /**
+     * Use or not captcha
+     *
+     * @var string
+     */
+    private $useCaptcha = true;
+
+    /**
      * List of messages. Array contains validation_errors, success message, safe errors.
      * 'success' => 'one success message'
      *
@@ -77,6 +84,8 @@ class Comments
             $this->lang = $config['lang'];
         if(isset($config['table']))
             $this->table = $config['table'];
+        if(isset($config['captcha']))
+            $this->table = $config['captcha'];
 
         $this->createRules = array_merge(require(__DIR__ . "/../config/create_rules.php"), $this->createRules);
         $this->editRules = array_merge(require(__DIR__ . "/../config/edit_rules.php"), $this->editRules);
@@ -94,6 +103,13 @@ class Comments
     public function create(array $input)
     {
         $this->clearMessages();
+
+        if($this->useCaptcha) {
+          if(!CommentsCaptcha::checkCaptcha($input['captcha'])) {
+            throw new CaptchaException($this->customMessages['invalid_captcha']);
+          }
+        }
+
         $validator = $this->validator->make($input, $this->createRules, $this->customMessages, $this->customAttributes);
         if (!$validator->passes()) {
             throw new ValidationFailException($this->customMessages['validation_fail'], $validator->errors()->toArray());

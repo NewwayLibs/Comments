@@ -31,6 +31,18 @@
         </div>
 
         <div class="row">
+            <label>&nbsp;</label>
+            <img class="captcha" src="<?=\Newway\Comments\CommentsCaptcha::getCaptchaImage()?>">
+            <div class="clr"></div>
+        </div>
+
+        <div class="row">
+            <label for="captcha">Каптча:</label>
+            <input type="text" name="captcha" id="captcha" value="<?= (isset($_POST['captcha']) ? htmlspecialchars($_POST['captcha']) : null) ?>" />
+            <div class="clr"></div>
+        </div>
+
+        <div class="row">
             <label for="rating">Рейтинг:</label>
             <div class="starRating">
                 <div>
