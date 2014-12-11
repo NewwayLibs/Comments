@@ -63,7 +63,6 @@ class EasyCaptcha
         }
         $this->wave_region($im, 0, 0, $this->width, $this->height, $rand * mt_rand($this->amplitude_min, $this->amplitude_max), mt_rand(30, 40));
         if (function_exists("imagepng")) {
-            header("Content-Type: image/png");
             imagepng($im);
         } else {
           throw new \Exception('Function "imagepng" doesn`t exists');
