@@ -2,8 +2,8 @@
 
 <h3><?=$header?></h3>
 <?foreach($comments as $comment):?>
-    <div class="nw_comment_block col-md-12">
-        <hr/>
+    <div class="nw_comment_block col-md-12" style="<?=$comment['status'] ? ' background: #dff0d8; ' : ' background: #f2dede; '?> padding-bottom:15px;">
+        <hr style="margin-top: 0;"/>
         <div class="col-md-6">
             <b>Тип контента:</b> <?=$comment['content_type']?><br/>
             <b>Контент ID:</b> <?=$comment['content_id']?><br/>
