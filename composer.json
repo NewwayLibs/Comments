@@ -10,8 +10,8 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "illuminate/database": "4.1.30",
-        "illuminate/validation": "4.1.30"
+        "illuminate/database": ">=4.1.30",
+        "illuminate/validation": ">=4.1.30"
     },
     "autoload": {
         "psr-0": {
