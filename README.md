@@ -29,15 +29,14 @@
 **4) Create comments table:**
 
 Run `Newway\Comments\Init::init()` once in any part of application, after `Newway\Comments\Init::initDatabase` method, to create comments table. You must run once this code, and delete it.
-Init() metod create table with `id`, `content_type`, `content_id`, `user_name`, `user_email`, `user_phone`, `user_ip`, `status`, `rating`, `created_at` and `body` fields.
 
 **5) Finaly create an instance of the class**
 
     //create instance with standart parameters
-    $comments = new Newway\Comments\Comments();
+    $comments = new Newway\Comments\Comments::getInstance();
     
     //or create instance with your configuration
-    $comments = new Newway\Comments\Comments(
+    $comments = new Newway\Comments\Comments::getInstance(
         array(
             'customMessages' => array(
                 'required' => 'Field &laquo;:attribute&raquo; is required.',
@@ -67,14 +66,15 @@ Use `Newway\Comments\Comments` class for CRUD operations.
     
     //Create new comment
     $comments->create($id, [
+        'content_type' => 'page',
+        'content_id' => $pageId,
         'name' => 'newway',
         'email' => 'newway@newway.com',
         'body' => 'My text'
       ]);
     
     //Read comment
-    $pageComments = $comments->getList('pages');
-    $allComments = getListAll();
+    $pageComments = $comments->getList($params);
 
     //Update
     $comments->update($id, $_POST);
@@ -88,7 +88,7 @@ You can see saving or updating results:
         $comments->edit($id, $_POST))
     } catch (Newway\Comments\Exceptions\ValidationFailException $e) {
         $errors = $comments->getValidationErrors();
-    } catch (Newway\Comments\Exceptions\UpdateCommentException $e) {
+    } catch (Newway\Comments\Exceptions\NewwayCommentsException $e) {
         $error = $comments->getError();
     }
 
@@ -125,5 +125,50 @@ To use package admin panel you must:
                 'content_id' => 1,
                 'status' => 1,
             )
-        )
+        ),
+        $messages,
+        $validationResult
     );
+    
+Not required variable $messages must be an array like ['type' => 'mesage'].
+Not required variable $validationResult must contain validation errors from Newway\Comments\Exceptions\ValidationFailException.
+
+**Create comments list/add page like here:**
+
+    $c = Newway\Comments\Comments::getInstance();
+    $cTemplate = new Newway\Comments\CommentsTemplate();
+    $messages = array();
+    $validationResult = array();
+    if (!empty($_POST)) {
+        try {
+            $c->create(
+                array_merge(
+                    array(
+                        'content_type' => $contentType,
+                        'content_id' => $contentId,
+                        'status' => 1
+                    ),
+                    $_POST
+                )
+            );
+            $messages = array('success' => $c->getSuccess());
+            $_POST = array();
+        } catch (Newway\Comments\Exceptions\ValidationFailException $e) {
+          $validationResult = $e->getErrors();
+        }catch (Newway\Comments\Exceptions\NewwayCommentsException $e) {
+          $messages['error'] = $e->getMessage();
+        }
+    }
+    $cTemplate->displayCss();
+    $cTemplate->display(
+        $c->getList(
+            array(
+                'content_type' => $contentType,
+                'content_id' => $contentId,
+                'status' => 1,
+            )
+        ),
+        $messages,
+        $validationResult
+    );
+    
