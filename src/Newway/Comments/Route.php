@@ -36,7 +36,7 @@ class Route
      */
     public static function replaceParameters($arr)
     {
-        return $_SERVER['SCRIPT_NAME'] . '?' . http_build_query($arr);
+        return $_SERVER['REDIRECT_URL'] . '?' . http_build_query($arr);
     }
 
 }
