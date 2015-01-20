@@ -116,7 +116,8 @@ class Comments
         }
 
         $comment = new CommentsModel($input);
-        $comment->setUpdatedAt($comment->freshTimestamp());
+        if(empty($input['created_at']))
+            $comment->setCreatedAt($comment->freshTimestamp());
         if($comment->save()){
             if(!$comment->content_url) {
               $comment->content_url = "{$_SERVER['HTTP_REFERER']}#comment_{$comment->id}";
@@ -144,7 +145,8 @@ class Comments
         if (!$validator->passes()) {
           throw new ValidationFailException("Validation fail", $validator->errors()->toArray());
         }
-        $comment->setCreatedAt($comment->freshTimestamp());
+        if(empty($input['created_at']))
+            $comment->setCreatedAt($comment->freshTimestamp());
         if($comment->update($input)){
             $this->messages['success'] = $this->customMessages['successfully_edit'];
         } else {
