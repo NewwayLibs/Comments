@@ -42,6 +42,13 @@
                 <option value="1" <?=($comment['status'] == 1) ? 'selected' : ''?>>Включен</option>
             </select>
         </div>
+        <div class="form-group">
+            <label for="InputValidation1">Валидация</label>
+            <select class="form-control" id="InputValidation1" name="validation">
+                <option value="0" <?=($comment['validation'] == 0) ? 'selected' : ''?>>Нет</option>
+                <option value="1" <?=($comment['validation'] == 1) ? 'selected' : ''?>>Да</option>
+            </select>
+        </div>
 
         <div class="form-group">
             <label for="InputDate1">Рейтинг: </label>

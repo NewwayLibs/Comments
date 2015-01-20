@@ -36,6 +36,7 @@ class Init
                 $table->string('user_phone')->nullable();
                 $table->string('user_ip')->nullable();
                 $table->tinyInteger('status')->default(0);
+                $table->tinyInteger('validation')->default(0);
                 $table->tinyInteger('rating')->default(0);
                 $table->timestamp('created_at')->default(Capsule::connection()->raw('CURRENT_TIMESTAMP'));
                 $table->text('body');
@@ -68,7 +69,7 @@ class Init
         if (!isset($_SESSION)) {
             session_start();
         }
-        $controller = new AdminController;
+        $controller = new AdminController(isset($_GET['c_validation']) ? $_GET['c_validation'] : 2);
         if (!isset($_GET['c_task']) || $_GET['c_task'] == 'all') {
             $controller->getIndex();
         } elseif ($_GET['c_task'] == 'add') {

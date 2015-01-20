@@ -85,7 +85,7 @@ class Comments
         if(isset($config['table']))
             $this->table = $config['table'];
         if(isset($config['captcha']))
-            $this->table = $config['captcha'];
+            $this->useCaptcha = $config['captcha'];
 
         $this->createRules = array_merge(require(__DIR__ . "/../config/create_rules.php"), $this->createRules);
         $this->editRules = array_merge(require(__DIR__ . "/../config/edit_rules.php"), $this->editRules);

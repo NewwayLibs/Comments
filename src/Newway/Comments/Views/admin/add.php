@@ -36,9 +36,16 @@
         </div>
         <div class="form-group">
             <label for="InputStatus1">Статус</label>
-            <select class="form-control" name="status">
+            <select id="InputStatus1" class="form-control" name="status">
                 <option value="0">Выключен</option>
                 <option value="1">Активен</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="InputValidation1">Валидация</label>
+            <select class="form-control" id="InputValidation1" name="validation">
+                <option value="0">Нет</option>
+                <option value="1">Да</option>
             </select>
         </div>
 

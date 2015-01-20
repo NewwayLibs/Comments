@@ -13,11 +13,25 @@ class AdminController
     public $pageParameterName = 'commentsPage';
     protected $template = 'template';
 
+    /**
+     * 0 - not validated, 1 - validated, 2 - all
+     * @var int
+     */
+    protected $validation = 2;
+
+    public function __construct($validation = 2) {
+        $this->validation = $validation;
+    }
+
     public function getIndex()
     {
+        $_SESSION['comments_last_lists_task'] = $_GET['c_task'];
+        $_SESSION['comments_last_lists_page'] = $_GET['commentsPage'];
         $header = "Все комментарии";
+        $parameters = [];
+        $parameters = $this->addValidation($parameters);
         $comments = Comments::getInstance()->getList(
-            array(),
+            $parameters,
             $this->perPage,
             'DESC'
         );
@@ -31,18 +45,20 @@ class AdminController
 
     public function getGroup($group)
     {
+        $_SESSION['comments_last_lists_task'] = $_GET['c_task'];
+        $_SESSION['comments_last_lists_page'] = $_GET['commentsPage'];
         $header = "Комментарии группы $group";
+        $parameters = [
+            'content_type' => $group
+        ];
+        $parameters = $this->addValidation($parameters);
         $comments = Comments::getInstance()->getList(
-            array(
-                'content_type' => $group
-            ),
+            $parameters,
             $this->perPage,
             'DESC'
         );
         $count = Comments::getInstance()->getListCount(
-            array(
-                'content_type' => $group
-            )
+            $parameters
         );
         $paginator = new Pagination($count, $this->perPage, $this->pageParameterName);
         ob_start();
@@ -73,8 +89,17 @@ class AdminController
         try {
           $comment = $comments->getComment($id);
         } catch (CommentNotFoundException $e) {
-            $_SESSION['comments_messages'][] = implode('<br>', $e->getErrors());
-            header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
+            $_SESSION['comments_messages'][] = $e->getMessage();
+            header(
+                "Location: " . Route::replaceParameters(
+                    Route::addParam(
+                        $_GET,
+                        array(
+                            'c_task' => 'all'
+                        )
+                    )
+                )
+            );
             exit;
         }
         ob_start();
@@ -103,12 +128,34 @@ class AdminController
             exit;
         } catch(NewwayCommentsException $e) {
             $_SESSION['comments_messages'][] = $e->getMessage();
-            header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
+            header(
+                "Location: " . Route::replaceParameters(
+                    Route::addParam(
+                        $_GET,
+                        array(
+                            'c_task' => !empty($_SESSION['comments_last_lists_task']) ? $_SESSION['comments_last_lists_task'] : 'all',
+                            'commentsPage' => !empty($_SESSION['comments_last_lists_page']) ? $_SESSION['comments_last_lists_page'] : 1,
+                            'content_type' => $_POST['type']
+                        )
+                    )
+                )
+            );
             exit;
         }
 
         $_SESSION['comments_messages'][] = $comments->getSuccess();
-        header("Location: " . Route::replaceParameters(Route::addParam($_GET, array('c_task' => 'all'))));
+        header(
+            "Location: " . Route::replaceParameters(
+                Route::addParam(
+                    $_GET,
+                    array(
+                        'c_task' => !empty($_SESSION['comments_last_lists_task']) ? $_SESSION['comments_last_lists_task'] : 'all',
+                        'commentsPage' => !empty($_SESSION['comments_last_lists_page']) ? $_SESSION['comments_last_lists_page'] : 1,
+                        'content_type' => $_POST['content_type']
+                    )
+                )
+            )
+        );
         exit;
     }
 
@@ -141,5 +188,11 @@ class AdminController
         $comments = Comments::getInstance();
 
         $comments->delete($id);
+    }
+
+    protected function addValidation($parameters) {
+        if($this->validation != 2)
+            $parameters['validation'] = $this->validation;
+        return $parameters;
     }
 }

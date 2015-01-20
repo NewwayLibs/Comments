@@ -7,7 +7,7 @@ class Comments extends Eloquent {
 
     public $timestamps = false;
 
-    protected $fillable = array('content_type', 'content_id', 'status', 'rating', 'user_name', 'user_email', 'user_phone', 'user_ip', 'body', 'content_url', 'content_url_title');
+    protected $fillable = array('content_type', 'content_id', 'status', 'validation', 'rating', 'user_name', 'user_email', 'user_phone', 'user_ip', 'body', 'content_url', 'content_url_title');
 
     /**
      * Create a new Eloquent model instance.
