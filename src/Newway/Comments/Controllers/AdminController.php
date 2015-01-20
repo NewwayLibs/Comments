@@ -28,7 +28,7 @@ class AdminController
         $_SESSION['comments_last_lists_task'] = $_GET['c_task'];
         $_SESSION['comments_last_lists_page'] = $_GET['commentsPage'];
         $header = "Все комментарии";
-        $parameters = [];
+        $parameters = array();
         $parameters = $this->addValidation($parameters);
         $comments = Comments::getInstance()->getList(
             $parameters,
