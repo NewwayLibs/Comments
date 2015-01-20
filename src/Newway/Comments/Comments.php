@@ -261,4 +261,10 @@ class Comments
       if(isset($customMessages['attributes']))
         $this->customAttributes = $customMessages['attributes'];
     }
+    public function turnOnCaptcha() {
+        $this->useCaptcha = 1;
+    }
+    public function turnOffCaptcha() {
+        $this->useCaptcha = 0;
+    }
 }
