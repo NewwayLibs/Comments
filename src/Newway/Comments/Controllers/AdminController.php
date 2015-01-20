@@ -48,9 +48,9 @@ class AdminController
         $_SESSION['comments_last_lists_task'] = $_GET['c_task'];
         $_SESSION['comments_last_lists_page'] = $_GET['commentsPage'];
         $header = "Комментарии группы $group";
-        $parameters = [
+        $parameters = array(
             'content_type' => $group
-        ];
+        );
         $parameters = $this->addValidation($parameters);
         $comments = Comments::getInstance()->getList(
             $parameters,
@@ -87,7 +87,7 @@ class AdminController
         $header = "Редактирование комментария";
         $comments = Comments::getInstance();
         try {
-          $comment = $comments->getComment($id);
+            $comment = $comments->getComment($id);
         } catch (CommentNotFoundException $e) {
             $_SESSION['comments_messages'][] = $e->getMessage();
             header(
