@@ -116,7 +116,7 @@ class Comments
         }
 
         $comment = new CommentsModel($input);
-        $comment->setCreatedAt($comment->freshTimestamp());
+        $comment->setUpdatedAt($comment->freshTimestamp());
         if($comment->save()){
             if(!$comment->content_url) {
               $comment->content_url = "{$_SERVER['HTTP_REFERER']}#comment_{$comment->id}";
