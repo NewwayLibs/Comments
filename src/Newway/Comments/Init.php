@@ -69,7 +69,10 @@ class Init
         if (!isset($_SESSION)) {
             session_start();
         }
-        $controller = new AdminController(isset($_GET['c_validation']) ? $_GET['c_validation'] : 2);
+        $controller = new AdminController(
+            isset($_GET['c_validation']) ? $_GET['c_validation'] : 2,
+            isset($_GET['c_status']) ? $_GET['c_status'] : 2
+        );
         if (!isset($_GET['c_task']) || $_GET['c_task'] == 'all') {
             $controller->getIndex();
         } elseif ($_GET['c_task'] == 'add') {

@@ -18,9 +18,11 @@ class AdminController
      * @var int
      */
     protected $validation = 2;
+    protected $status = 2;
 
-    public function __construct($validation = 2) {
+    public function __construct($validation = 2, $status = 2) {
         $this->validation = $validation;
+        $this->status = $status;
     }
 
     public function getIndex()
@@ -30,12 +32,13 @@ class AdminController
         $header = "Все комментарии";
         $parameters = array();
         $parameters = $this->addValidation($parameters);
+        $parameters = $this->addStatus($parameters);
         $comments = Comments::getInstance()->getList(
             $parameters,
             $this->perPage,
             'DESC'
         );
-        $count = Comments::getInstance()->getListCount();
+        $count = Comments::getInstance()->getListCount($parameters);
         $paginator = new Pagination($count, $this->perPage, $this->pageParameterName);
         ob_start();
         require(__DIR__ . '/../Views/admin/index.php');
@@ -52,6 +55,7 @@ class AdminController
             'content_type' => $group
         );
         $parameters = $this->addValidation($parameters);
+        $parameters = $this->addStatus($parameters);
         $comments = Comments::getInstance()->getList(
             $parameters,
             $this->perPage,
@@ -193,6 +197,12 @@ class AdminController
     protected function addValidation($parameters) {
         if($this->validation != 2)
             $parameters['validation'] = $this->validation;
+        return $parameters;
+    }
+
+    protected function addStatus($parameters) {
+        if($this->status != 2)
+            $parameters['status'] = $this->status;
         return $parameters;
     }
 }

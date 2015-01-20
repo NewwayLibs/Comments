@@ -13,5 +13,9 @@
         <li><a style="<?= isset($_GET['c_validation']) && $_GET['c_validation'] == 0 ? ' background: #e8e8e8; ' : ''?>" href="<?=Route::replaceParameters(Route::addParam($_GET, array('c_validation' => 0)));?>">Нет</a></li>
         <li><a style="<?= isset($_GET['c_validation']) && $_GET['c_validation'] == 1 ? ' background: #e8e8e8; ' : ''?>" href="<?=Route::replaceParameters(Route::addParam($_GET, array('c_validation' => 1)));?>">Да</a></li>
         <li><a style="<?= isset($_GET['c_validation']) && $_GET['c_validation'] == 2 ? ' background: #e8e8e8; ' : ''?>" href="<?=Route::replaceParameters(Route::addParam($_GET, array('c_validation' => 2)));?>">Все</a></li>
+        <li class="nav-header">Со статусом:</li>
+        <li><a style="<?= isset($_GET['c_status']) && $_GET['c_status'] == 0 ? ' background: #e8e8e8; ' : ''?>" href="<?=Route::replaceParameters(Route::addParam($_GET, array('c_status' => 0)));?>">Выключен</a></li>
+        <li><a style="<?= isset($_GET['c_status']) && $_GET['c_status'] == 1 ? ' background: #e8e8e8; ' : ''?>" href="<?=Route::replaceParameters(Route::addParam($_GET, array('c_status' => 1)));?>">Включен</a></li>
+        <li><a style="<?= isset($_GET['c_status']) && $_GET['c_status'] == 2 ? ' background: #e8e8e8; ' : ''?>" href="<?=Route::replaceParameters(Route::addParam($_GET, array('c_status' => 2)));?>">Все</a></li>
     <? endif; ?>
 </ul>
