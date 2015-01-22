@@ -87,6 +87,10 @@ class Init
             $controller->editComment($_GET['c_id']);
         } elseif ($_GET['c_task'] == '_delete') {
             $controller->deleteComment($_GET['c_id']);
+        } elseif ($_GET['c_task'] == 'toggle_validation') {
+            $controller->toggleValidation($_GET['c_id']);
+        } elseif ($_GET['c_task'] == 'toggle_status') {
+            $controller->toggleStatus($_GET['c_id']);
         }
     }
 

@@ -145,8 +145,6 @@ class Comments
         if (!$validator->passes()) {
           throw new ValidationFailException("Validation fail", $validator->errors()->toArray());
         }
-        if(empty($input['created_at']))
-            $comment->setCreatedAt($comment->freshTimestamp());
         if($comment->update($input)){
             $this->messages['success'] = $this->customMessages['successfully_edit'];
         } else {
@@ -188,8 +186,7 @@ class Comments
             $commentsPage = isset($_REQUEST['commentsPage']) ? $_REQUEST['commentsPage'] : 1;
             $comments = $comments->offset(($commentsPage - 1) * $perPage)->limit($perPage);
         }
-        if(!empty($orderType))
-            $comments = $comments->orderBy('created_at', $orderType);
+        $comments = $comments->orderBy('created_at', $orderType);
         $comments = $comments->get()->toArray();
         return $comments;
     }

@@ -194,6 +194,34 @@ class AdminController
         $comments->delete($id);
     }
 
+    public function toggleStatus($id)
+    {
+        $comments = Comments::getInstance();
+
+        $comment = $comments->getComment($id);
+
+        $status = !(bool)$comment['status'];
+
+        $comments->edit($id, array(
+            'status' => $status
+        ));
+        exit;
+    }
+
+    public function toggleValidation($id)
+    {
+        $comments = Comments::getInstance();
+
+        $comment = $comments->getComment($id);
+
+        $status = !(bool)$comment['validation'];
+
+        $comments->edit($id, array(
+            'validation' => $status
+        ));
+        exit;
+    }
+
     protected function addValidation($parameters) {
         if($this->validation != 2)
             $parameters['validation'] = $this->validation;

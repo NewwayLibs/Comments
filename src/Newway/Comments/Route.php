@@ -8,11 +8,13 @@ class Route
      * @param $params
      * @return array
      */
-    public static function addParam($arr, $params)
+    public static function addParam($arr, $params, $reset = true)
     {
-        unset($arr['content_type']);
-        unset($arr['commentsPage']);
-        unset($arr['c_id']);
+        if ($reset) {
+            unset($arr['content_type']);
+            unset($arr['c_id']);
+            unset($arr['commentsPage']);
+        }
         $arr = array_merge($arr, $params);
         return $arr;
     }
